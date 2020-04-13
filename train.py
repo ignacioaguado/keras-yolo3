@@ -107,6 +107,8 @@ def create_callbacks(saved_weights_name, tensorboard_logs, model_to_save):
     )    
     return [early_stop, checkpoint, reduce_on_plateau, tensorboard]
 
+
+
 def create_model(
     nb_class, 
     anchors, 
@@ -160,7 +162,7 @@ def create_model(
         print("\nLoading pretrained weights.\n")
         template_model.load_weights(saved_weights_name)
     else:
-        template_model.load_weights("backend.h5", by_name=True)       
+        template_model.load_weights("training_data/backend.h5", by_name=True)       
 
     if multi_gpu > 1:
         train_model = multi_gpu_model(template_model, gpus=multi_gpu)

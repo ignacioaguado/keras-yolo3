@@ -3,13 +3,13 @@
         "min_input_size":       288,
         "max_input_size":       448,
         "anchors":              [55,69, 75,234, 133,240, 136,129, 142,363, 203,290, 228,184, 285,359, 341,260],
-        "labels":               ["kangaroo"]
+        "labels":               ["raccoon"]
     },
 
     "train": {
-        "train_image_folder":   "/home/andy/Desktop/github/kangaroo/images/",
-        "train_annot_folder":   "/home/andy/Desktop/github/kangaroo/annots/",
-        "cache_name":           "kangaroo_train.pkl",
+        "train_image_folder":   "/Users/nachoaguadoc/data/tagging/bounding_boxes/keras-yolo3/training_data/train_image_folder/",
+        "train_annot_folder":   "/Users/nachoaguadoc/data/tagging/bounding_boxes/keras-yolo3/training_data/train_annot_folder/",
+        "cache_name":           "/Users/nachoaguadoc/data/tagging/bounding_boxes/keras-yolo3/training_data/cache.pkl",
 
         "train_times":          8,
         "batch_size":           16,
@@ -17,7 +17,7 @@
         "nb_epochs":            100,
         "warmup_epochs":        3,
         "ignore_thresh":        0.5,
-        "gpus":                 "0,1",
+        "gpus":                 "",
 
         "grid_scales":          [1,1,1],
         "obj_scale":            5,
@@ -26,7 +26,7 @@
         "class_scale":          1,
 
         "tensorboard_dir":      "logs",
-        "saved_weights_name":   "kangaroo.h5",
+        "saved_weights_name":   "test.weights",
         "debug":                true
     },
 
