@@ -124,7 +124,7 @@ def create_callbacks(saved_weights_name, tensorboard_logs, model_to_save, valid_
     valid_map = EvaluationCallback(
         infer_model            = model_to_save,
         valid_generator        = valid_generator,
-        labels.                = labels
+        labels                 = labels
     )
     return [early_stop, checkpoint, reduce_on_plateau, tensorboard, valid_map]
 
