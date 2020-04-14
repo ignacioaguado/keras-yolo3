@@ -265,7 +265,10 @@ def _main_(args):
         verbose          = 2 if config['train']['debug'] else 1,
         callbacks        = callbacks, 
         workers          = 4,
-        max_queue_size   = 8
+        max_queue_size   = 8,
+        validation_data  = valid_generator,
+        validation_steps = len(valid_generator),
+        validation_freq  = 1
     )
 
     # make a GPU version of infer_model for evaluation
