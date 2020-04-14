@@ -8,7 +8,7 @@ from voc import parse_voc_annotation
 from yolo import create_yolov3_model, dummy_loss
 from generator import BatchGenerator
 from utils.utils import normalize, evaluate, makedirs
-from keras.callbacks import EarlyStopping, ReduceLROnPlateau
+from keras.callbacks import Callback, EarlyStopping, ReduceLROnPlateau
 from keras.optimizers import Adam
 from callbacks import CustomModelCheckpoint, CustomTensorBoard
 from utils.multi_gpu_model import multi_gpu_model
@@ -24,6 +24,17 @@ config = tf.compat.v1.ConfigProto(
 config.gpu_options.allow_growth = True
 session = tf.compat.v1.Session(config=config)
 tf.compat.v1.keras.backend.set_session(session)
+
+class EvaluationCallback(Callback):
+    def __init__(self, infer_model, valid_generator):
+        super(EvaluationCallback, self).__init__()
+
+        self.infer_model = infer_model
+        self.valid_generator = valid_generator
+
+    def on_epoch_end(self, logs={}):
+        evaluate(self.infer_model, self.valid_generator)
+
 
 def create_training_instances(
     train_annot_folder,
@@ -71,7 +82,7 @@ def create_training_instances(
 
     return train_ints, valid_ints, sorted(labels), max_box_per_image
 
-def create_callbacks(saved_weights_name, tensorboard_logs, model_to_save):
+def create_callbacks(saved_weights_name, tensorboard_logs, model_to_save, valid_generator):
     makedirs(tensorboard_logs)
     
     early_stop = EarlyStopping(
@@ -104,8 +115,12 @@ def create_callbacks(saved_weights_name, tensorboard_logs, model_to_save):
         log_dir                = tensorboard_logs,
         write_graph            = True,
         write_images           = True,
-    )    
-    return [early_stop, checkpoint, reduce_on_plateau, tensorboard]
+    )
+    valid_map = EvaluationCallback(
+        infer_model            = model_to_save,
+        valid_generator        = valid_generator
+    )
+    return [early_stop, checkpoint, reduce_on_plateau, tensorboard, valid_map]
 
 
 
@@ -256,7 +271,7 @@ def _main_(args):
     ###############################
     #   Kick off the training
     ###############################
-    callbacks = create_callbacks(config['train']['saved_weights_name'], config['train']['tensorboard_dir'], infer_model)
+    callbacks = create_callbacks(config['train']['saved_weights_name'], config['train']['tensorboard_dir'], infer_model, valid_generator)
 
     train_model.fit_generator(
         generator        = train_generator, 
