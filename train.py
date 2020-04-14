@@ -32,8 +32,13 @@ class EvaluationCallback(Callback):
         self.infer_model = infer_model
         self.valid_generator = valid_generator
 
-    def on_epoch_end(self, logs={}):
-        evaluate(self.infer_model, self.valid_generator)
+    def on_epoch_end(self, epoch, logs=None):
+        average_precisions = evaluate(self.infer_model, self.valid_generator)
+        print(f'Epoch {epoch} Validation Metrics:')
+        print('     mAP: {:.4f}'.format(sum(average_precisions.values()) / len(average_precisions)))    
+        for label, average_precision in average_precisions.items():
+            print('         ' + labels[label] + ': {:.4f}'.format(average_precision))
+        
 
 
 def create_training_instances(
