@@ -91,7 +91,7 @@ def create_callbacks(saved_weights_name, tensorboard_logs, model_to_save, valid_
     makedirs(tensorboard_logs)
     
     early_stop = EarlyStopping(
-        monitor     = 'loss', 
+        monitor     = 'val_loss', 
         min_delta   = 0.01, 
         patience    = 7, 
         mode        = 'min', 
@@ -100,7 +100,7 @@ def create_callbacks(saved_weights_name, tensorboard_logs, model_to_save, valid_
     checkpoint = CustomModelCheckpoint(
         model_to_save   = model_to_save,
         filepath        = saved_weights_name,# + '{epoch:02d}.h5', 
-        monitor         = 'loss', 
+        monitor         = 'val_loss', 
         verbose         = 1, 
         save_best_only  = True, 
         mode            = 'min', 
