@@ -26,20 +26,20 @@ session = tf.compat.v1.Session(config=config)
 tf.compat.v1.keras.backend.set_session(session)
 
 class EvaluationCallback(Callback):
-    def __init__(self, infer_model, valid_generator):
+    def __init__(self, infer_model, valid_generator, labels):
         super(EvaluationCallback, self).__init__()
 
         self.infer_model = infer_model
         self.valid_generator = valid_generator
+        self.labels = labels
 
     def on_epoch_end(self, epoch, logs=None):
         average_precisions = evaluate(self.infer_model, self.valid_generator)
         print(f'Epoch {epoch} Validation Metrics:')
         print('     mAP: {:.4f}'.format(sum(average_precisions.values()) / len(average_precisions)))    
         for label, average_precision in average_precisions.items():
-            print('         ' + labels[label] + ': {:.4f}'.format(average_precision))
+            print('         ' + self.labels[label] + ': {:.4f}'.format(average_precision))
         
-
 
 def create_training_instances(
     train_annot_folder,
@@ -276,7 +276,7 @@ def _main_(args):
     ###############################
     #   Kick off the training
     ###############################
-    callbacks = create_callbacks(config['train']['saved_weights_name'], config['train']['tensorboard_dir'], infer_model, valid_generator)
+    callbacks = create_callbacks(config['train']['saved_weights_name'], config['train']['tensorboard_dir'], infer_model, valid_generator, labels)
 
     train_model.fit_generator(
         generator        = train_generator, 
