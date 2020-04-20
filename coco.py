@@ -23,7 +23,7 @@ def parse_coco_annotation(coco_file_path, img_dir, cache_name, labels=[]):
             img_dict[img['id']] = {
                     'filename': os.path.join(img_dir, img['filename']),
                     'width': img['width'],
-                    'height': img['height']
+                    'height': img['height'],
                     'object': []
                 }
 
