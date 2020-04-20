@@ -55,7 +55,7 @@ def parse_coco_annotation(coco_file_path, img_dir, cache_name, labels=[], split_
         total_annotations = sum(list(initial_seen_labels.values()))
 
         split_len = split_len or total_annotations
-        
+
         # Adapted from Tagging abc_data_generators.py
         deque_dict = {}
         for tag_code, tag_annotations in annot_by_tag_code.items():
@@ -84,10 +84,10 @@ def parse_coco_annotation(coco_file_path, img_dir, cache_name, labels=[], split_
                     continue_looping = False
                     break
 
-        img_ids_to_use = []
+        img_ids_to_use = set()
         for ann in annotations_to_use:
             img_dict[ann['image_id']]['object'].append(ann)
-            img_ids_to_use.append(ann['image_id'])
+            img_ids_to_use.add(ann['image_id'])
 
         all_insts = []
         for img_id in img_ids_to_use:
