@@ -39,7 +39,7 @@ def parse_coco_annotation(coco_file_path, img_dir, cache_name, labels=[], split_
             obj['name'] = cat_name
 
 
-            if tag_id_to_code[ann['category_id']] in initial_seen_labels:
+            if cat_name in initial_seen_labels:
                 initial_seen_labels[cat_name] += 1
             else:
                 initial_seen_labels[cat_name] = 1
@@ -54,18 +54,18 @@ def parse_coco_annotation(coco_file_path, img_dir, cache_name, labels=[], split_
 
         total_annotations = sum(list(initial_seen_labels.values()))
 
+        split_len = split_len or total_annotations
+        
         # Adapted from Tagging abc_data_generators.py
-        if split_len:
-            deque_dict = {}
-            for tag_code, tag_annotations in annot_by_tag_code.items():
-                shuffle(tag_annotations)
-                real_batch_size = min(total_annotations, split_len) if split_len else total_annotations
-                deque_dict[tag_code] = {
-                    'queue': deque(tag_annotations),
-                    'ratio': int(np.ceil(len(tag_annotations) / total_annotations * real_batch_size)) if keep_original_dist else 1
-                }
+        deque_dict = {}
+        for tag_code, tag_annotations in annot_by_tag_code.items():
+            shuffle(tag_annotations)
+            real_batch_size = min(total_annotations, split_len) if split_len else total_annotations
+            deque_dict[tag_code] = {
+                'queue': deque(tag_annotations),
+                'ratio': int(np.ceil(len(tag_annotations) / total_annotations * real_batch_size)) if keep_original_dist else 1
+            }
 
-        final_seen_labels = {}
         continue_looping = True
         annotations_to_use = []
 
@@ -86,8 +86,8 @@ def parse_coco_annotation(coco_file_path, img_dir, cache_name, labels=[], split_
 
         img_ids_to_use = []
         for ann in annotations_to_use:
-            img_dict[annotations_to_use['image_id']]['object'].append(ann)
-            img_ids_to_use.append(annotations_to_use['image_id'])
+            img_dict[ann['image_id']]['object'].append(ann)
+            img_ids_to_use.append(ann['image_id'])
 
         all_insts = []
         for img_id in img_ids_to_use:
@@ -104,4 +104,4 @@ def parse_coco_annotation(coco_file_path, img_dir, cache_name, labels=[], split_
         with open(cache_name, 'wb') as handle:
             pickle.dump(cache, handle, protocol=pickle.HIGHEST_PROTOCOL)    
                         
-    return all_insts, seen_labels
+    return all_insts, final_seen_labels
