@@ -51,10 +51,11 @@ def create_training_instances(
     valid_cache,
     labels,
     valid_split_size,
-    test_split_size
+    test_split_size,
+    split_len
 ):
     # parse annotations of the training set
-    train_ints, train_labels = parse_coco_annotation(coco_file_path, train_image_folder, train_cache, labels)
+    train_ints, train_labels = parse_coco_annotation(coco_file_path, train_image_folder, train_cache, labels, split_len)
 
     train_split_idx = int((1-valid_split_size-test_split_size)*len(train_ints))
     valid_split_idx = int((1-test_split_size)*len(train_ints))
@@ -213,7 +214,8 @@ def _main_(args):
         config['valid']['cache_name'],
         config['model']['labels'],
         config['valid']['split_size'],
-        config['test']['split_size']
+        config['test']['split_size'],
+        config['train']['split_len']
     )
     print('\nTraining on: \t' + str(labels) + '\n')
 
