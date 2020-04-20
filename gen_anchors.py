@@ -127,6 +127,7 @@ if __name__ == '__main__':
         '-a',
         '--anchors',
         default=9,
+        type=int,
         help='number of anchors to use')
 
     args = argparser.parse_args()
