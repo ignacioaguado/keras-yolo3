@@ -9,7 +9,7 @@ def parse_coco_annotation(coco_file_path, img_dir, cache_name, labels=[], split_
     if os.path.exists(cache_name):
         with open(cache_name, 'rb') as handle:
             cache = pickle.load(handle)
-        all_insts, seen_labels, split_len = cache['all_insts'], cache['seen_labels'], cache['split_len']
+        all_insts, final_seen_labels, split_len = cache['all_insts'], cache['seen_labels'], cache['split_len']
     else:
         all_insts = []
         initial_seen_labels = {}
