@@ -3,6 +3,7 @@ import os
 from collections import deque
 import pickle
 import json
+from random import shuffle
 
 def parse_coco_annotation(coco_file_path, img_dir, cache_name, labels=[], split_len=None, keep_original_dist=False):
     if os.path.exists(cache_name):
