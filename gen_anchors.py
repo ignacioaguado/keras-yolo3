@@ -2,6 +2,8 @@ import random
 import argparse
 import numpy as np
 
+from coco import parse_coco_annotation
+
 from voc import parse_voc_annotation
 import json
 
@@ -91,8 +93,8 @@ def _main_(argv):
     with open(config_path) as config_buffer:
         config = json.loads(config_buffer.read())
 
-    train_imgs, train_labels = parse_voc_annotation(
-        config['train']['train_annot_folder'],
+    train_imgs, train_labels = parse_coco_annotation(
+        config['train']['coco_file_path'],
         config['train']['train_image_folder'],
         config['train']['cache_name'],
         config['model']['labels']
@@ -101,7 +103,6 @@ def _main_(argv):
     # run k_mean to find the anchors
     annotation_dims = []
     for image in train_imgs:
-        print(image['filename'])
         for obj in image['object']:
             relative_w = (float(obj['xmax']) - float(obj['xmin']))/image['width']
             relatice_h = (float(obj["ymax"]) - float(obj['ymin']))/image['height']
