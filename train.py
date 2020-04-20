@@ -85,7 +85,7 @@ def create_training_instances(
 
     max_box_per_image = max([len(inst['object']) for inst in (train_ints + valid_ints)])
 
-    return train_ints, valid_ints, sorted(labels), max_box_per_image
+    return train_ints, valid_ints, testints, sorted(labels), max_box_per_image
 
 def create_callbacks(saved_weights_name, tensorboard_logs, model_to_save, valid_generator, labels):
     makedirs(tensorboard_logs)
@@ -204,7 +204,7 @@ def _main_(args):
     ###############################
     #   Parse the annotations 
     ###############################
-    train_ints, valid_ints, labels, max_box_per_image = create_training_instances(
+    train_ints, valid_ints, test_ints, labels, max_box_per_image = create_training_instances(
         config['train']['coco_file_path'],
         config['train']['train_image_folder'],
         config['train']['cache_name'],
