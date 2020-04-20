@@ -55,24 +55,24 @@ def create_training_instances(
     split_len
 ):
     # parse annotations of the training set
-    train_ints, train_labels = parse_coco_annotation(coco_file_path, train_image_folder, train_cache, labels, split_len)
+    total_ints, total_labels = parse_coco_annotation(coco_file_path, train_image_folder, train_cache, labels, split_len)
 
-    train_split_idx = int((1-valid_split_size-test_split_size)*len(train_ints))
-    valid_split_idx = int((1-test_split_size)*len(train_ints))
+    train_split_idx = int((1-valid_split_size-test_split_size)*len(total_ints))
+    valid_split_idx = int((1-test_split_size)*len(total_ints))
 
     np.random.seed(0)
-    np.random.shuffle(train_ints)
+    np.random.shuffle(total_ints)
     np.random.seed()
 
-    train_ints = train_ints[:train_split_idx]
-    valid_ints = train_ints[train_split_idx:valid_split_idx]
-    test_ints = train_ints[valid_split_idx:]
-
+    train_ints = total_ints[:train_split_idx]
+    valid_ints = total_ints[train_split_idx:valid_split_idx]
+    test_ints = total_ints[valid_split_idx:]
+    print(f'Train: {len(train_ints)}, Validation: {len(valid_ints)}, Test: {len(test_ints)}')
     # compare the seen labels with the given labels in config.json
     if len(labels) > 0:
-        overlap_labels = set(labels).intersection(set(train_labels.keys()))
+        overlap_labels = set(labels).intersection(set(total_labels.keys()))
 
-        print('Seen labels: \t'  + str(train_labels) + '\n')
+        print('Seen labels: \t'  + str(total_labels) + '\n')
         print('Given labels: \t' + str(labels))
 
         # return None, None, None if some given label is not in the dataset
@@ -81,8 +81,8 @@ def create_training_instances(
             return None, None, None
     else:
         print('No labels are provided. Train on all seen labels.')
-        print(train_labels)
-        labels = train_labels.keys()
+        print(total_labels)
+        labels = total_labels.keys()
 
     max_box_per_image = max([len(inst['object']) for inst in (train_ints + valid_ints)])
 
