@@ -49,7 +49,7 @@ def parse_coco_annotation(coco_file_path, img_dir, cache_name, labels=[], split_
             obj['xmax'] = int(round(float(ann['bbox'][2])))
             obj['ymax'] = int(round(float(ann['bbox'][3])))
             
-            annot_by_tag_code[ann['category_id']].append(obj)
+            annot_by_tag_code[tag_id_to_code[ann['category_id']]].append(obj)
 
         total_annotations = sum(list(initial_seen_labels.values()))
 
