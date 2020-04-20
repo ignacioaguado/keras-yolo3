@@ -21,7 +21,7 @@ def parse_coco_annotation(coco_file_path, img_dir, cache_name, labels=[]):
         img_dict = {}
         for img in coco_json['images']:
             img_dict[img['id']] = {
-                    'filename': os.path.join(img_dir, img['filename']),
+                    'filename': os.path.join(img_dir, img['file_name']),
                     'width': img['width'],
                     'height': img['height'],
                     'object': []
