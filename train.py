@@ -5,6 +5,7 @@ import os
 import numpy as np
 import json
 from voc import parse_voc_annotation
+from coco import parse_coco_annotation
 from yolo import create_yolov3_model, dummy_loss
 from generator import BatchGenerator
 from utils.utils import normalize, evaluate, makedirs
@@ -42,7 +43,7 @@ class EvaluationCallback(Callback):
         
 
 def create_training_instances(
-    train_annot_folder,
+    coco_file_path,
     train_image_folder,
     train_cache,
     valid_annot_folder,
@@ -51,7 +52,7 @@ def create_training_instances(
     labels,
 ):
     # parse annotations of the training set
-    train_ints, train_labels = parse_voc_annotation(train_annot_folder, train_image_folder, train_cache, labels)
+    train_ints, train_labels = parse_coco_annotation(coco_file_path, train_image_folder, train_cache, labels)
 
     # parse annotations of the validation set, if any, otherwise split the training set
     if os.path.exists(valid_annot_folder):
@@ -205,7 +206,7 @@ def _main_(args):
     #   Parse the annotations 
     ###############################
     train_ints, valid_ints, labels, max_box_per_image = create_training_instances(
-        config['train']['train_annot_folder'],
+        config['train']['coco_file_path'],
         config['train']['train_image_folder'],
         config['train']['cache_name'],
         config['valid']['valid_annot_folder'],
