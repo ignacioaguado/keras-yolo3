@@ -12,6 +12,8 @@ def parse_coco_annotation(coco_file_path, img_dir, cache_name, labels=[], split_
     else:
         all_insts = []
         initial_seen_labels = {}
+        final_seen_labels = {}
+
         with open(coco_file_path, 'r') as coco_file:
             coco_json = json.load(coco_file)
 
