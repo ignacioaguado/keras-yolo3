@@ -98,7 +98,7 @@ def _main_(argv):
         config['train']['train_image_folder'],
         config['train']['cache_name'],
         config['model']['labels'],
-        config['split_len']
+        config['train']['split_len']
     )
 
     # run k_mean to find the anchors

@@ -17,7 +17,7 @@ def parse_coco_annotation(coco_file_path, img_dir, cache_name, labels=[], split_
 
         categories = coco_json['categories']
 
-        tag_id_to_name = {cat['id']: cat['name'] for cat in categories}
+        tag_id_to_code = {cat['id']: cat['name'] for cat in categories}
         img_dict = {}
         for img in coco_json['images']:
             img_dict[img['id']] = {
@@ -27,16 +27,16 @@ def parse_coco_annotation(coco_file_path, img_dir, cache_name, labels=[], split_
                     'object': []
                 }
 
-        annot_by_tag_code = {tag_code: [] for tag_code in tag_id_to_name.values()}
+        annot_by_tag_code = {tag_code: [] for tag_code in tag_id_to_code.values()}
 
         for ann in coco_json['annotations']:
             obj = {}
             obj['image_id'] = ann['image_id']
-            cat_name = tag_id_to_name[ann['category_id']]
+            cat_name = tag_id_to_code[ann['category_id']]
             obj['name'] = cat_name
 
 
-            if tag_id_to_name[ann['category_id']] in initial_seen_labels:
+            if tag_id_to_code[ann['category_id']] in initial_seen_labels:
                 initial_seen_labels[cat_name] += 1
             else:
                 initial_seen_labels[cat_name] = 1
