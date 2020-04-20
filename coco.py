@@ -34,7 +34,7 @@ def parse_coco_annotation(coco_file_path, img_dir, cache_name, labels=[]):
             cat_name = tag_id_to_name[ann['category_id']]
             obj['name'] = cat_name
 
-            if ann['category_id'] in seen_labels:
+            if tag_id_to_name[ann['category_id']] in seen_labels:
                 seen_labels[cat_name] += 1
             else:
                 seen_labels[cat_name] = 1

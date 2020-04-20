@@ -50,23 +50,22 @@ def create_training_instances(
     valid_image_folder,
     valid_cache,
     labels,
+    valid_split_size,
+    test_split_size
 ):
     # parse annotations of the training set
     train_ints, train_labels = parse_coco_annotation(coco_file_path, train_image_folder, train_cache, labels)
 
-    # parse annotations of the validation set, if any, otherwise split the training set
-    if os.path.exists(valid_annot_folder):
-        valid_ints, valid_labels = parse_voc_annotation(valid_annot_folder, valid_image_folder, valid_cache, labels)
-    else:
-        print("valid_annot_folder not exists. Spliting the trainining set.")
+    train_split_idx = int((1-valid_split_size-test_split_size)*len(train_ints))
+    valid_split_idx = int((1-test_split_size)*len(train_ints))
 
-        train_valid_split = int(0.8*len(train_ints))
-        np.random.seed(0)
-        np.random.shuffle(train_ints)
-        np.random.seed()
+    np.random.seed(0)
+    np.random.shuffle(train_ints)
+    np.random.seed()
 
-        valid_ints = train_ints[train_valid_split:]
-        train_ints = train_ints[:train_valid_split]
+    train_ints = train_ints[:train_split_idx]
+    valid_ints = train_ints[train_split_idx:valid_split_idx]
+    test_ints = train_ints[valid_split_idx:]
 
     # compare the seen labels with the given labels in config.json
     if len(labels) > 0:
@@ -212,7 +211,9 @@ def _main_(args):
         config['valid']['valid_annot_folder'],
         config['valid']['valid_image_folder'],
         config['valid']['cache_name'],
-        config['model']['labels']
+        config['model']['labels'],
+        config['valid']['split_size'],
+        config['test']['split_size']
     )
     print('\nTraining on: \t' + str(labels) + '\n')
 
@@ -235,6 +236,20 @@ def _main_(args):
     
     valid_generator = BatchGenerator(
         instances           = valid_ints, 
+        anchors             = config['model']['anchors'],   
+        labels              = labels,        
+        downsample          = 32, # ratio between network input's size and network output's size, 32 for YOLOv3
+        max_box_per_image   = max_box_per_image,
+        batch_size          = config['train']['batch_size'],
+        min_net_size        = config['model']['min_input_size'],
+        max_net_size        = config['model']['max_input_size'],   
+        shuffle             = True, 
+        jitter              = 0.0, 
+        norm                = normalize
+    )    
+
+    test_generator = BatchGenerator(
+        instances           = test_ints, 
         anchors             = config['model']['anchors'],   
         labels              = labels,        
         downsample          = 32, # ratio between network input's size and network output's size, 32 for YOLOv3
@@ -301,7 +316,7 @@ def _main_(args):
     #   Run the evaluation
     ###############################   
     # compute mAP for all the classes
-    average_precisions = evaluate(infer_model, valid_generator)
+    average_precisions = evaluate(infer_model, test_generator)
 
     # print the score
     for label, average_precision in average_precisions.items():
