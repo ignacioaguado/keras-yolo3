@@ -41,8 +41,8 @@ class CustomModelCheckpoint(ModelCheckpoint):
             if self.save_best_only:
                 current = logs.get(self.monitor)
                 if current is None:
-                    warnings.warn('Can save best model only with %s available, '
-                                  'skipping.' % (self.monitor), RuntimeWarning)
+                    print('Can save best model only with %s available, '
+                                  'skipping.' % (self.monitor))
                 else:
                     if self.monitor_op(current, self.best):
                         if self.verbose > 0:

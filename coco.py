@@ -38,6 +38,8 @@ def parse_coco_annotation(coco_file_path, img_dir, cache_name, labels=[], split_
             cat_name = tag_id_to_code[ann['category_id']]
             obj['name'] = cat_name
 
+            if labels and cat_name not in labels:
+                continue
 
             if cat_name in initial_seen_labels:
                 initial_seen_labels[cat_name] += 1
